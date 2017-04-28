@@ -5,6 +5,7 @@
  */
 package autopostsoicomputer.base;
 
+import autopostsoicomputer.API.WPApi;
 import autopostsoicomputer.base.model.ItemRss;
 import autopostsoicomputer.base.model.PostObject;
 import java.io.IOException;
@@ -51,6 +52,16 @@ public abstract class Reader {
     }
 
     public abstract List<PostObject> parseContent() throws IOException;
+
+    protected Element attrachImage(Element content) {
+        WPApi api = new WPApi();
+        for (Element aTag : content.getElementsByTag("img")) {
+            String urlImage = aTag.attr("src");
+            String url = api.generateImage(autopostsoicomputer.AutoPostSoiComputer.URL_SOI_COMPUTER, urlImage);
+            aTag.attr("src", url.replaceAll("/home/shopfree/domains/soicomputer.com/public_html/", autopostsoicomputer.AutoPostSoiComputer.URL_SOI_COMPUTER));
+        }
+        return content;
+    }
 
     protected void setUrl(String url) {
         this.RSS_CNTT = url;

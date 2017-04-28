@@ -5,6 +5,7 @@
  */
 package autopostsoicomputer.API;
 
+import autopostsoicomputer.base.ReaderFactory;
 import autopostsoicomputer.base.model.PostObject;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,18 +30,24 @@ public class WPApi implements SoiComputerApi {
     int count_getPost = 0;
     int maxTries_getPost = 1;
 
-    public static final String USER = "kiendt";
-    public static final String PASS = "123";
+    public static final String USER = "adminSoiComputer";
+    public static final String PASS = "123asdzxc!@#ASDZXC";
 
     @Override
     public void createNewPostWP(PostObject po, String strUrlWordpress) throws UnsupportedEncodingException, IOException {
-
+        strUrlWordpress += "createpost.php";
         for (;;) {
             try {
                 HttpClient client = new DefaultHttpClient();
 
                 ////// Get Variable
                 String strPostTitle = po.getPostTitle();
+                // check if postTitle has posted
+                if (ReaderFactory.getInstance().getListTitlePosted().contains(strPostTitle)) {
+                    System.out.println("post existed!!!!!");
+                    return;
+                }
+
                 String strPostImageFeature = po.getPostImageFeature();
                 String strPostCategory = po.getPostCategory();
                 String strPostContent = po.getPostContent();
@@ -53,7 +60,6 @@ public class WPApi implements SoiComputerApi {
                 List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
                 urlParameters.add(new BasicNameValuePair("user", USER));
                 urlParameters.add(new BasicNameValuePair("pass", PASS));
-                ///
                 urlParameters.add(new BasicNameValuePair("post_title", strPostTitle));
                 urlParameters.add(new BasicNameValuePair("cat", strPostCategory));
                 urlParameters.add(new BasicNameValuePair("post_content", strPostContent));
@@ -76,6 +82,9 @@ public class WPApi implements SoiComputerApi {
                 }
 
                 System.out.println(result.toString());
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    ReaderFactory.getInstance().writeFile(strPostTitle);
+                }
             } catch (Exception ex) {
                 System.out.println("ERROR CREATE POST : " + ex.toString());
                 count_getPost++;
@@ -95,6 +104,7 @@ public class WPApi implements SoiComputerApi {
 
     @Override
     public void getCategoryId(String strUrlWordpress, String slug) {
+        strUrlWordpress += "getCategory.php";
         try {
             HttpClient client = new DefaultHttpClient();
             //////
@@ -133,6 +143,7 @@ public class WPApi implements SoiComputerApi {
 
     @Override
     public String generateImage(String strUrlWordpress, String imageUrl) {
+        strUrlWordpress += "generateImage.php";
         try {
             HttpClient client = new DefaultHttpClient();
             //////
@@ -142,7 +153,7 @@ public class WPApi implements SoiComputerApi {
             List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
             urlParameters.add(new BasicNameValuePair("user", USER));
             urlParameters.add(new BasicNameValuePair("pass", PASS));
-            urlParameters.add(new BasicNameValuePair("image_url", imageUrl));
+            urlParameters.add(new BasicNameValuePair("image_future", imageUrl));
             post.setEntity(new UrlEncodedFormEntity(urlParameters, "UTF-8"));
             HttpResponse response = client.execute(post);
             System.out.println("\nSending 'POST' request to URL : " + strUrlWordpress);
@@ -156,7 +167,6 @@ public class WPApi implements SoiComputerApi {
             while ((line = rd.readLine()) != null) {
                 result.append(line);
             }
-
             return result.toString();
         } catch (Exception e) {
             e.printStackTrace();

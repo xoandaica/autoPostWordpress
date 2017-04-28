@@ -8,12 +8,15 @@ package autopostsoicomputer;
 import autopostsoicomputer.API.WPApi;
 import autopostsoicomputer.base.Reader;
 import autopostsoicomputer.base.ReaderFactory;
-import autopostsoicomputer.base.model.ItemRss;
 import autopostsoicomputer.base.model.PostObject;
-import autopostsoicomputer.ictnew.ReaderICTNEW;
+import autopostsoicomputer.ictnew.ReaderIctGame;
+import autopostsoicomputer.ictnew.ReaderIctNew;
+import autopostsoicomputer.itexpress.ReaderGenkVn;
+import autopostsoicomputer.news.ReaderVietnamnet;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,25 +30,40 @@ public class AutoPostSoiComputer {
     public static final String URL_SOI_COMPUTER = "http://soicomputer.com/";
     public static final String URL_TEST = "http://localhost/wordpress/";
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         WPApi instance = new WPApi();
-        ReaderFactory.getInstance().addReader(new ReaderICTNEW());
+        ReaderFactory.getInstance().addReader(new ReaderIctGame());
+//        ReaderFactory.getInstance().addReader(new ReaderIctNew());
+//        ReaderFactory.getInstance().addReader(new ReaderVietnamnet());
+//        ReaderFactory.getInstance().addReader(new ReaderGenkVn());
 
-//        for (Reader reader : ReaderFactory.getInstance().getListReader()) {
-//            List<PostObject> listPost = reader.parseContent();
-//            for (PostObject object : listPost) {
-//                instance.createNewPostWP(object, URL_SOI_COMPUTER + "createpost.php");
-//            }
-//        }
-        instance.generateImage(URL_TEST + "generateImage.php", "http://image1.ictnews.vn/_Files/2017/04/27/cuc-tan-so.jpg");
+        for (Reader reader : ReaderFactory.getInstance().getListReader()) {
+            List<PostObject> listPost = null;
+            try {
+                listPost = reader.parseContent();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            if (listPost != null) {
+                for (PostObject object : listPost) {
+                    try {
+                        instance.createNewPostWP(object, URL_SOI_COMPUTER);
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        }
 
+        //        ReaderFactory.getInstance().readFile();
+//        instance.generateImage(URL_TEST + "generateImage.php", "http://image1.ictnews.vn/_Files/2017/04/27/cuc-tan-so.jpg");
 //        Reader reader = new Reader();
 //        List<PostObject> listPost = reader.parseContent();
 //        WPApi instance = new WPApi();
 //        for (PostObject object : listPost) {
 //            instance.createNewPostWP(object, "http://soicomputer.com/createpost.php");
 //        }
-//        instance.getCategoryId(URL_SOI_COMPUTER + "soi_getCategory.php", "tin-cong-nghe");
+//        instance.getCategoryId(URL_SOI_COMPUTER, "thu-thuat-may-tinh");
     }
 
 }

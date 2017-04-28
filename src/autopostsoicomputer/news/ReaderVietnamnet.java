@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package autopostsoicomputer.ictnew;
+package autopostsoicomputer.news;
 
+import autopostsoicomputer.base.ICATEGORY;
 import autopostsoicomputer.base.Reader;
 import autopostsoicomputer.base.model.ItemRss;
 import autopostsoicomputer.base.model.PostObject;
@@ -20,7 +21,7 @@ import org.jsoup.select.Elements;
  *
  * @author kiendt
  */
-public class ReaderICTNEW extends Reader {
+public class ReaderVietnamnet extends Reader {
 
     public static final String URL = "http://vietnamnet.vn/rss/cong-nghe.rss";
 
@@ -37,18 +38,22 @@ public class ReaderICTNEW extends Reader {
             // remove tag a
             for (Element aTag : content.getElementsByTag("a")) {
                 aTag.remove();
-
             }
+            for (Element aTag : content.getElementsByTag("p")) {
+                aTag.attr("style", "color: #000000;");
+            }
+            content = attrachImage(content);
+
             object.setPostTitle(title.text());
             object.setPostImageFeature(item.getImage());
-            object.setPostCategory("104");
+            object.setPostCategory(String.valueOf(ICATEGORY.CATEGORY_TIN_CONG_NGHE));
             object.setPostContent(content.html());
             listPostObject.add(object);
         }
         return listPostObject;
     }
 
-    public ReaderICTNEW() {
+    public ReaderVietnamnet() {
         setUrl(URL);
     }
 
