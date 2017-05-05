@@ -43,10 +43,6 @@ public class WPApi implements SoiComputerApi {
                 ////// Get Variable
                 String strPostTitle = po.getPostTitle();
                 // check if postTitle has posted
-                if (ReaderFactory.getInstance().getListTitlePosted().contains(strPostTitle)) {
-                    System.out.println("post existed!!!!!");
-                    return;
-                }
 
                 String strPostImageFeature = po.getPostImageFeature();
                 String strPostCategory = po.getPostCategory();
@@ -103,7 +99,7 @@ public class WPApi implements SoiComputerApi {
     }
 
     @Override
-    public void getCategoryId(String strUrlWordpress, String slug) {
+    public String getCategoryId(String strUrlWordpress, String slug) {
         strUrlWordpress += "getCategory.php";
         try {
             HttpClient client = new DefaultHttpClient();
@@ -135,10 +131,11 @@ public class WPApi implements SoiComputerApi {
                 result.append(line);
             }
 
-            System.out.println(result.toString());
+            return result.toString().replaceAll("adminSoiComputer123asdzxc!@#ASDZXC", "");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return "";
     }
 
     @Override

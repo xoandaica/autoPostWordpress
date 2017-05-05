@@ -29,7 +29,7 @@ public class ReaderGenkVn extends Reader {
     @Override
     public List<PostObject> parseContent() throws IOException {
         List<PostObject> listPostObject = new ArrayList<PostObject>();
-        for (ItemRss item : parseSouce()) {
+        for (ItemRss item : parseSouce(URL)) {
             PostObject object = new PostObject();
             Document doc = Jsoup.connect(item.getLink()).get();
             Element article = doc.select("html").first();
@@ -56,9 +56,9 @@ public class ReaderGenkVn extends Reader {
     }
 
     @Override
-    protected List<ItemRss> parseSouce() throws IOException {
+    protected List<ItemRss> parseSouce(String rsLinkg) throws IOException {
         List<ItemRss> listItem = new ArrayList<>();
-        Document doc = readSource(RSS_CNTT);
+        Document doc = readSource(rsLinkg);
 
         Element eData = doc.select("html").first();
         Element elements = eData.getElementsByClass("kds-new-stream-wrapper").first();
@@ -75,16 +75,8 @@ public class ReaderGenkVn extends Reader {
                     img);
             listItem.add(item);
         }
+        removeDuplicate(listItem);
         return listItem;
-    }
-
-    public ReaderGenkVn() {
-        setUrl(URL);
-    }
-
-    public static void main(String[] args) throws IOException {
-        ReaderGenkVn read = new ReaderGenkVn();
-        read.parseSouce();
     }
 
 }

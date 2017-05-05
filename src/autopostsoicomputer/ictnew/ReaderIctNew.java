@@ -9,14 +9,12 @@ import autopostsoicomputer.base.ICATEGORY;
 import autopostsoicomputer.base.Reader;
 import autopostsoicomputer.base.model.ItemRss;
 import autopostsoicomputer.base.model.PostObject;
-import static autopostsoicomputer.news.ReaderVietnamnet.URL;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  *
@@ -29,7 +27,7 @@ public class ReaderIctNew extends Reader implements ICATEGORY {
     @Override
     public List<PostObject> parseContent() throws IOException {
         List<PostObject> listPostObject = new ArrayList<PostObject>();
-        for (ItemRss item : parseSouce()) {
+        for (ItemRss item : parseSouce(URL)) {
             PostObject object = new PostObject();
             Document doc = Jsoup.connect(item.getLink()).get();
             Element article = doc.select("html").first();
@@ -64,7 +62,4 @@ public class ReaderIctNew extends Reader implements ICATEGORY {
         return listPostObject;
     }
 
-    public ReaderIctNew() {
-        setUrl(URL);
-    }
 }

@@ -8,9 +8,16 @@ package autopostsoicomputer.base;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,26 +64,50 @@ public class ReaderFactory {
             }
 
         }
-        List<String> listTitle = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(FILE_NAME))) {
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                listTitle.add(sCurrentLine);
+        try {
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(
+                            new FileInputStream(FILE_NAME), "UTF8"));
+
+            String str;
+
+            while ((str = in.readLine()) != null) {
+                listTitlePosted.add(str);
             }
-            return listTitle;
+            in.close();
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
-        return null;
+        return listTitlePosted;
     }
 
     public void writeFile(String content) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
-            bw.append(content);
-            bw.newLine();
+        try {
+            Writer out = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(FILE_NAME, true), "UTF8"));
+            out.append(content);
+            out.append("\r\n");
+            out.flush();
+            out.close();
+
+        } catch (UnsupportedEncodingException e) {
+            System.out.println(e.getMessage());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
+//        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME, true))) {
+//            bw.append(content);
+//            bw.newLine();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public List<String> getListTitlePosted() {

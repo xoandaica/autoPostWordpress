@@ -10,6 +10,7 @@ import autopostsoicomputer.base.model.ItemRss;
 import autopostsoicomputer.base.model.PostObject;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -34,9 +35,19 @@ public abstract class Reader {
         return Jsoup.connect(url).get();
     }
 
-    protected List<ItemRss> parseSouce() throws IOException {
+    protected void removeDuplicate(List<ItemRss> listDuplicate) {
+        Iterator<ItemRss> iter = listDuplicate.iterator();
+        while (iter.hasNext()) {
+            if (ReaderFactory.getInstance().getListTitlePosted().contains(iter.next().getTitle())) {
+                System.out.println("post existed!!!!!");
+                iter.remove();
+            }
+        }
+    }
+
+    protected List<ItemRss> parseSouce(String link) throws IOException {
         List<ItemRss> listItem = new ArrayList<>();
-        Document doc = readSource(RSS_CNTT);
+        Document doc = readSource(link);
 
         Element eData = doc.select("channel").first();
         Elements elements = eData.getElementsByTag("item");
@@ -47,7 +58,7 @@ public abstract class Reader {
                     tmp.getElementsByTag(RSS_IMAGE).text());
             listItem.add(item);
         }
-
+        removeDuplicate(listItem);
         return listItem;
     }
 
@@ -63,8 +74,7 @@ public abstract class Reader {
         return content;
     }
 
-    protected void setUrl(String url) {
-        this.RSS_CNTT = url;
-    }
-
+//    protected void setUrl(String url) {
+//        this.RSS_CNTT = url;
+//    }
 }

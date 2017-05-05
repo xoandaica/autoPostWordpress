@@ -29,7 +29,7 @@ public class ReaderIctGame extends Reader implements ICATEGORY {
     @Override
     public List<PostObject> parseContent() throws IOException {
         List<PostObject> listPostObject = new ArrayList<PostObject>();
-        for (ItemRss item : parseSouce()) {
+        for (ItemRss item : parseSouce(URL)) {
             PostObject object = new PostObject();
             Document doc = Jsoup.connect(item.getLink()).get();
             Element article = doc.select("html").first();
@@ -46,7 +46,7 @@ public class ReaderIctGame extends Reader implements ICATEGORY {
 
             Element alright = elements.getElementsByClass("maincontent").first().getElementsByAttributeValue("align", "right").first();
             content = attrachImage(content);
-            
+
             // parse descriptiton to get image description
             int posSrc = item.getDescription().indexOf("src=\"") + 5;
             int desSrc = item.getDescription().indexOf("\" width");
@@ -63,8 +63,5 @@ public class ReaderIctGame extends Reader implements ICATEGORY {
         return listPostObject;
     }
 
-    public ReaderIctGame() {
-        setUrl(URL);
-    }
 
 }

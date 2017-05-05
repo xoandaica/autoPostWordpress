@@ -17,7 +17,7 @@ public interface SoiComputerApi {
 
     void createNewPostWP(PostObject po, String strUrlWordpress) throws UnsupportedEncodingException, IOException;
 
-    void getCategoryId(String strUrlWordpress, String slug);
+    String getCategoryId(String strUrlWordpress, String slug);
 
     String generateImage(String strUrlWordpress, String imageUrl);
 
